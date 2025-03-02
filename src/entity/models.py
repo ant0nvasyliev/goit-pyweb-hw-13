@@ -1,7 +1,6 @@
 from datetime import datetime
-import enum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Integer, Date, ForeignKey, func, DateTime
+from sqlalchemy import String, Integer, Date, ForeignKey, func, DateTime, Boolean
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -24,6 +23,8 @@ class Contact(Base):
     user: Mapped["User"] = relationship("User", backref="contacts", lazy="joined")
 
 
+
+
 class User(Base):
     __tablename__ = 'users'
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -34,3 +35,4 @@ class User(Base):
     refresh_token: Mapped[str] = mapped_column(String(255), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=func.now(), onupdate=func.now())
+    confirmed: Mapped[bool] = mapped_column(Boolean, default=False, nullable=True)

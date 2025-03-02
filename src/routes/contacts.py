@@ -44,13 +44,13 @@ async def update_contact(
     return contact
 
 
-@router.delete('/{contact_id}', response_model=ContactResponse)
+@router.delete('/{contact_id}', response_model=dict)
 async def delete_contact(contact_id: int, db: AsyncSession = Depends(get_db),
                          user: User = Depends(auth_service.get_current_user)):
     contact = await repositories_contacts.delete_contact(contact_id, db, user)
     if contact is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Contact not found')
-    return contact
+    return {"message": "Deleted successfully"}
 
 
 @router.get('/search/', response_model=list[ContactResponse])
