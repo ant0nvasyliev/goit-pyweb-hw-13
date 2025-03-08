@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends, status, Path, Query
+from fastapi_limiter.depends import RateLimiter
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.database.db import get_db
@@ -26,7 +27,8 @@ async def get_contact_by_id(contact_id: int, db: AsyncSession = Depends(get_db),
     return contact
 
 
-@router.post('/', response_model=ContactResponse, status_code=status.HTTP_201_CREATED)
+@router.post('/', response_model=ContactResponse, status_code=status.HTTP_201_CREATED,
+             dependencies=[Depends(RateLimiter(times=1, seconds=5))])
 async def create_contact(body: ContactSchema, db: AsyncSession = Depends(get_db),
                          user: User = Depends(auth_service.get_current_user)):
     contact = await repositories_contacts.create_contact(body, db, user)
